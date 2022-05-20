@@ -27,6 +27,7 @@ ydot(2) = (Fsy-Fp*cos(phi))/rocketMass-g;
 ydot(4) = y(2);
 ydot(5) = y(2)/Ls/cos(alpha);
 ydot(6) = y(5); %alpha - dot = alphadot;
+% ciao
 
 disp(t);
 disp(ydot(2));
