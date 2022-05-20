@@ -5,8 +5,8 @@ function [Lp, Lpdot,phi,Fp,pa,pb,Fsy,Fsx,R,Rx,x] = determineStateEvolution(t,y)
 global d Lss Ls mu_din;
 
 
-alpha = y(6);
-alphadot =y(5);
+alpha = asin(y(4)/Ls);
+alphadot = y(2)/Ls/cos(alpha);
 % FIRST: CALCULATE L_PRIMARY, L_PRIMARY DOT, AND PRIMARY FORCE
 Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha));
 phi = acos((Lss^2-d^2-Lp^2)/Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
