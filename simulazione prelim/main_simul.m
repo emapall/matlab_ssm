@@ -14,7 +14,7 @@ v_vert0 = -3; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = .5e5; % 2 atm
+pIn = .5e4; % 2 atm
 xIn = 1; % m
 Aa = pi*.3^2;
 Ab = pi*.35^2;
@@ -23,14 +23,15 @@ Kp = 1e4; % 0.5 atm per 1 m/s of stroke compression speed;
 Lp_extended =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha0));
 
 %% differential equation
-time_extremes = [0 1];
+time_extremes = [0 2];
 y0 = zeros(6,1);
 %y is a coloumn vector holding the state of the system, so composed:
 % 1 2 ) v_x/y rocket 3 4) x/y rocket
 % 5) alpha_dot 6) alpha 
 % 7) gamma_dot 8) gamma only if non-vertical
 y0 = [0; v_vert0; 0; 4;];
-[t,y] = ode23(@odeFunRocket3D,time_extremes,y0);
+opt = odeset('AbsTol',1e-3,'RelTol',1e-3);
+[t,y] = ode23(@odeFunRocket3D,time_extremes,y0,opt);
 
 %% debugging and visual - re-calculating everything 
 N = length(t);
