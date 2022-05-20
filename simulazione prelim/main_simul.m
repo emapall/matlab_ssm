@@ -13,7 +13,7 @@ v_vert0 = -3; %m/s
 alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 1e5; % 2 atm
+pIn = .3e5; % 2 atm
 xIn = 1; % m
 Aa = pi*.3^2;
 Ab = pi*.35^2;

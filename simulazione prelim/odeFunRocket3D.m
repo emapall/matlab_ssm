@@ -31,5 +31,7 @@ ydot(6) = y(5); %alpha - dot = alphadot;
 
 disp(t);
 disp(ydot(2));
+
+Graphics(y(6))
 % TODO: INSERT CHECK ON leg effectively touching the ground 
 end
