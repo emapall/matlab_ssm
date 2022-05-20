@@ -18,7 +18,7 @@ xIn = 1; % m
 Aa = pi*.3^2;
 Ab = pi*.35^2;
 Kf = 0;
-Kp = 1e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Kp = 1e4; % 0.5 atm per 1 m/s of stroke compression speed;
 Lp_extended =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha0));
 
 %% differential equation
@@ -29,5 +29,18 @@ y0 = zeros(6,1);
 % 5) alpha_dot 6) alpha 
 % 7) gamma_dot 8) gamma only if non-vertical
 y0 = [0; v_vert0; 0; 5; alphadot0; alpha0;];
-[t,y] = ode45(@odeFunRocket3D,time_extremes,y0);
+[t,y] = ode23(@odeFunRocket3D,time_extremes,y0);
 
+%% debugging and visual
+alpha = y(:,6);
+alphadot = y(:,5);
+Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha));
+phi = acos((Lss^2-d^2-Lp.^2)./Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
+Lpdot = d*Lss*cos(alpha)./Lp.*alphadot;
+[Fp, pa, pb,x] = damperForce(Lp,Lpdot);
+
+% FROM HERE one can call any visual debug function one might like
+
+
+% IMPORTANT NOTE: X LIMIT FOR WHICH COMPUTATION EXPLODES IS ~5 to 0.1 mm
+% (3-5 computation steps).
