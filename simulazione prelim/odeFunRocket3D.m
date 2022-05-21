@@ -9,18 +9,20 @@ ydot = zeros(size(y));
 
 if  y(4)>h0 % NOTE: AN ASSERT SHOULD BE MADE AS TO WETHER LP>=LP_ext IF AND ONLY IF the rocket is not touching
     ydot(2) = -g;
+    disp("Volo libero!!!");
 else
     [~,~,phi,Fp,~,~,Fsy,~,~,~] = determineStateEvolution(t,y);
-    ydot(2) = (Fsy-Fp*cos(phi))/rocketMass-g;
+    ydot(2) = (Fsy-Fp*cos(phi))/rocketMass-g
+%     disp(y(4));
+%     disp(Fp);
+%     disp(y(2));
+%     disp(t);
 end
 ydot(1) = 0; % we don't care about x in this case
 ydot(3) = 0; % =y(1);
 ydot(4) = y(2);
 
-disp(y(4));
-disp(Fp);
-disp(y(2));
-disp(t);
+
 disp("----------------------");
 % TODO: INSERT CHECK ON leg effectively touching the ground 
 end

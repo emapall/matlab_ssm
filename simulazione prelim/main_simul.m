@@ -31,7 +31,7 @@ y0 = zeros(6,1);
 % 7) gamma_dot 8) gamma only if non-vertical
 y0 = [0; v_vert0; 0; 4;];
 opt = odeset('AbsTol',1e-3,'RelTol',1e-3);
-[t,y] = ode23(@odeFunRocket3D,time_extremes,y0,opt);
+[t,y] = ode45(@odeFunRocket3D,time_extremes,y0,opt);
 
 %% debugging and visual - re-calculating everything 
 N = length(t);
@@ -40,13 +40,12 @@ alpha=Lp; alphadot=Lp; phi=Lp; Lpdot=Lp; Fp=Lp; pa=Lp; pb=pa; x=Lp; R=Lp;
 
 
 for i=1:N
-    alpha(i) = y(i,6);
-    alphadot(i) = y(i,5);
-    [cLp, cLpdot,cphi,cFp,cpa,cpb,cFsy,cFsx,cR,cRx,cx] = determineStateEvolution(t(i),y(i,:));
-    Lp(i)=cLp; Lpdot(i)=cLpdot; phi(i)=cphi; Fp(i)=cFp; pa(i)=cpa; pb(i)=cpb; Fsy(i)=cFsy; Fsx(i)=cFsx; R(i)=cR; Rx(i)=cRx; x(i)=cx;     
-    if(cLp>=Lp_extended && 0); % TODO: MAKE THE EVENTS!
-        break;
-    end
+    alpha(i) = asin(y(i,4)/Ls);
+    alphadot(i) = y(i,2)/Ls/cos(alpha(i));
+
+    [cLp, cLpdot,cphi,cFp,cpa,cpb,cFsy,cFsx,cR,cRx,cx] = ...
+                determineStateEvolution(t(i),y(i,:));
+    Lp(i)=cLp; Lpdot(i)=cLpdot; phi(i)=cphi; Fp(i)=cFp; pa(i)=cpa; pb(i)=cpb; Fsy(i)=cFsy; Fsx(i)=cFsx; R(i)=cR; Rx(i)=cRx; x(i)=cx;
 end
     
     
