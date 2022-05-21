@@ -1,8 +1,9 @@
 clear all; close all;
 %% Variables initialization
-global rocketMass g d Lss Ls mu_din  h0; %alpha0
+global rocketMass g d Lss Ls mu_din  h0 vxStop; %alpha0
 rocketMass = 10000; % 10 tons?
 g = 10; %m/s^2
+vxStop = 1e-1;
 d = 4; %m
 Ls = 8; % m, estimated from picture
 h0 = 4;
