@@ -4,13 +4,16 @@ global rocketMass g d Lss Ls mu_din  h0 vxStop; %alpha0
 rocketMass = 10000; % 10 tons?
 g = 10; %m/s^2
 vxStop = 1e-1;
+% geometric parameters
 d = 4; %m
 Ls = 8; % m, estimated from picture
-h0 = 4;
-alpha0 = asin(h0/Ls); %estimated from picture
+h0 = 4; % m, distance of secondary strut joint from footpads plane
 a = 2; % m
 Lss = Ls-a;
 mu_din = 0.7;
+
+% initial conditions
+alpha0 = asin(h0/Ls); %estimated from picture
 v_vert0 = -3; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper

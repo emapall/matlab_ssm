@@ -12,7 +12,7 @@ Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha));
 phi = acos((Lss^2-d^2-Lp^2)/Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
 Lpdot = d*Lss*cos(alpha)/Lp*alphadot;
 vx = -Ls.*sin(alpha).*alphadot;
-if abs(vx>=vxStop)
+if abs(vx)>=vxStop
     mu_att = -sign(vx)*mu_din;
 else
     mu_att = -sign(vx)*mu_din.*vx/vxStop;
@@ -22,9 +22,12 @@ end
 [Fp, pa, pb,x] = damperForce(Lp,Lpdot);
 
 % SECOND: CALCULATE R (system already solved on paper in closed form)
-R = (-Fp).*(sin(phi-alpha))./(...
+R = (-Fp).*(sin(phi-alpha))./(...  % Ry
                     (cos(alpha)+mu_att)*(1-(Ls-Lss)/Lss)...
             );
+if R<0
+    R=0;
+end
 % TODO: R CANNOT BE LOWER THAN 0 (no contact)
 
 % THIRD: Calculate F_s x and y
