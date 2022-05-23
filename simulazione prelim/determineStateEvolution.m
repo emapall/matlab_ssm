@@ -12,12 +12,18 @@ Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha));
 phi = acos((Lss^2-d^2-Lp^2)/Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
 Lpdot = d*Lss*cos(alpha)/Lp*alphadot;
 vx = -Ls.*sin(alpha).*alphadot;
+% following block gets overwritten
+% NOTA: gestire LE VERSIONI SU STa cosa dell'attrito si poteva FARE MEGLIO con github, non
+% c'ho voglia (scusa herbi D: )
 if abs(vx)>=vxStop
     mu_att = -sign(vx)*mu_din;
 else
-    mu_att = -sign(vx)*mu_din.*(1.3-vx/vxStop*0.3);
+    mu_att = -sign(vx)*mu_din.*(1.3-vx/vxStop*0.3); % HERBIE
 end
 
+% PROVA MIA
+mu_att =  -sign(vx).*mu_din;
+mu_att(abs(vx)<=vxStop) = mu_din*(-vx(abs(vx)<=vxStop)./vxStop);
 
 [Fp, pa, pb,x] = damperForce(Lp,Lpdot);
 
