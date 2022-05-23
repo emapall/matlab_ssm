@@ -15,7 +15,7 @@ vx = -Ls.*sin(alpha).*alphadot;
 if abs(vx)>=vxStop
     mu_att = -sign(vx)*mu_din;
 else
-    mu_att = -sign(vx)*mu_din.*vx/vxStop;
+    mu_att = -sign(vx)*mu_din.*(1.3-vx/vxStop*0.3);
 end
 
 
@@ -23,8 +23,7 @@ end
 
 % SECOND: CALCULATE R (system already solved on paper in closed form)
 R = (-Fp).*(sin(phi-alpha))./(...  % Ry
-                    (cos(alpha)+mu_att)*(1-(Ls-Lss)/Lss)...
-            );
+                    (cos(alpha)+mu_att)*(1-(Ls-Lss)/Lss));
 if R<0
     R=0;
 end

@@ -40,7 +40,7 @@ opt = odeset('AbsTol',1e-3,'RelTol',1e-3);
 %% debugging and visual - re-calculating everything 
 N = length(t);
 Lp=zeros(N,1);
-alpha=Lp; alphadot=Lp; phi=Lp; Lpdot=Lp; Fp=Lp; pa=Lp; pb=pa; x=Lp; R=Lp;
+alpha=Lp; alphadot=Lp; Fsx=Lp; Fsy=Lp; phi=Lp; Lpdot=Lp; Fp=Lp; pa=Lp; pb=pa; x=Lp; R=Lp;
 
 
 for i=1:N
@@ -50,6 +50,11 @@ for i=1:N
     [cLp, cLpdot,cphi,cFp,cpa,cpb,cFsy,cFsx,cR,cRx,cx] = ...
                 determineStateEvolution(t(i),y(i,:));
     Lp(i)=cLp; Lpdot(i)=cLpdot; phi(i)=cphi; Fp(i)=cFp; pa(i)=cpa; pb(i)=cpb; Fsy(i)=cFsy; Fsx(i)=cFsx; R(i)=cR; Rx(i)=cRx; x(i)=cx;
+    if i>1
+    if abs(Fsx(i)-Fsx(i-1))>abs(Fsx(i))
+        k=1;
+    end
+    end
 end
     
     
@@ -64,6 +69,7 @@ Lpdot = d*Lss*cos(alpha)./Lp.*alphadot;
 R = (-Fp).*(sin(phi-alpha))./(...
                     (cos(alpha)+sign(alphadot).*mu_din)*(1-(Ls-Lss)/Lss)...
             );
+
 
 
 % FROM HERE one can call any visual debug function one might like
