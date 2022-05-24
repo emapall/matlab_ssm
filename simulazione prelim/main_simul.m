@@ -56,7 +56,14 @@ for i=1:N
     end
     end
 end
-    
+%%
+plot(t,y(:,2));
+hold on;
+plot(t,y(:,4));
+%%
+close all;
+plot(t,R/rocketMass);
+
     
 
 
