@@ -9,8 +9,8 @@ x = xIn - (Lp_extended-Lp).*(Ab/Aa); % todo fix
 % disp(x);
 % disp(Lpdot);
 pa = pIn*(xIn./x).^1.4;
-pb = pa-(Kp+Kf).*Lpdot;
-F =  -1*(pa-(Kp+Kf).*Lpdot).*Ab; % force positive if traction, piston compresses if Lpdot<0 
+pb = pa-(Kp+Kf).*Lpdot; %>0
+F =  -(pa-(Kp+Kf).*Lpdot).*Ab; % force positive if traction, piston compresses if Lpdot<0 
 
 % TODO: FIX, INTRODUCE THE NON LINEARITIES
 %   1) end of extension for piston
