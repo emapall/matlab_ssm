@@ -5,9 +5,9 @@ rocketMass = 50000; % 10 tons?
 g = 10; %m/s^2
 % geometric parameters
 d = 4; %m
-Ls = 8; % m, estimated from picture
+Ls = 7; % m, estimated from picture
 h0 = 4; % m, distance of secondary strut joint from footpads plane
-a = 2; % m
+a = 0.0; % m
 Lss = Ls-a;
 mu_din = 0.7;
 dxMaxFoot = 0.001;
@@ -16,13 +16,15 @@ alpha0 = asin(h0/Ls); %estimated from picture
 v_vert0 = -3; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper
+% AUMENTARE LA CORSA E' BENEFICO --> POSSO DIMINUIRE KP E DIMINUISCO LA
+% SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 1e5; % 2 atm
-xIn = 1.5; % m air chamber lenght initial
+pIn = 50e5; % 2 atm
+xIn = 1; % m air chamber lenght initial
 Aa = pi*.15^2;
-Ab = pi*.20^2;
+Ab = pi*.2^2;
 Kf = 0;
-Kp = 5e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Kp = 40e5; % 0.5 atm per 1 m/s of stroke compression speed;
 Lp_extended =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha0));
 
 %% differential equation
@@ -39,7 +41,8 @@ opt = odeset('AbsTol',1e-6,'RelTol',1e-6);
 %% debugging and visual - re-calculating everything 
 N = length(t);
 Lp=zeros(N,1);
-alpha=Lp; alphadot=Lp; Fsx=Lp; Fsy=Lp; phi=Lp; Lpdot=Lp; Fp=Lp; pa=Lp; pb=pa; x=Lp; R=Lp;
+alpha=Lp; alphadot=Lp; Fsx=Lp; Fsy=Lp; phi=Lp;
+Lpdot=Lp; Fp=Lp; pa=Lp; pb=pa; x=Lp; R=Lp;
 
 for i=1:N
     alpha(i) = asin(y(i,4)/Ls);
@@ -72,8 +75,7 @@ ylabel("press, atm");
 yyaxis right;
 ylabel("Piston stroke, m");
 title("<-Pressure and Piston stroke->");
-plot(t,x);
-title("Piston stroke (m)");
+plot(t,x,"k");
 
 subplot(2,2,4);
 plot(t,Fp);
