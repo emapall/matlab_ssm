@@ -8,7 +8,7 @@ global d Lss Ls mu_din dxMaxFoot;
 alpha = asin(y(4)/Ls);
 alphadot = y(2)/Ls/cos(alpha);
 % FIRST: CALCULATE L_PRIMARY, L_PRIMARY DOT, AND PRIMARY FORCE
-Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha));
+Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha)); % cos(90+alpha) = -sin(alpha)
 phi = acos(-(Lss^2-d^2-Lp^2)/Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
 Lpdot = d*Lss*cos(alpha)/Lp*alphadot;
 
@@ -28,8 +28,8 @@ mu_att = -dxFoot./dxMaxFoot*mu_din;
 [Fp, pa, pb,x] = damperForce(Lp,Lpdot);
 % disp([x, pa/1e5]);
 
-R = (-Fp).*(sin(phi-alpha))./(...  % Ry
-                    (cos(alpha)+mu_att)*(1-(Ls-Lss)/Lss));
+R = (-Fp).*(cos(phi+alpha))./...  % Ry
+                    (cos(alpha)+mu_att*sin(alpha))*Lss/Ls;
 if R<0
     R=0;
 end
