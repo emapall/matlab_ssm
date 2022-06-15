@@ -20,7 +20,7 @@ if(vxFoot>=0)
 else
     KSPeedFoot = min(1,max((1+KFootReturn)/0.1*(dxFoot+dxMaxFoot),-KFootReturn));
 end
-disp(KSPeedFoot);
+% disp(KSPeedFoot);
 dxFootdot = KSPeedFoot*vxFoot;
 mu_att = -dxFoot./dxMaxFoot*mu_din;
 % following block gets overwritten

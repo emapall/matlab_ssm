@@ -25,6 +25,6 @@ ydot(3) = 0; % =y(1);
 ydot(4) = y(2);
 ydot(5) = dxFootdot;
 
-disp("----------------------");
+% disp("----------------------");
 % TODO: INSERT CHECK ON leg effectively touching the ground 
 end
