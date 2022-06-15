@@ -19,12 +19,12 @@ v_vert0 = -3; %m/s
 % AUMENTARE LA CORSA E' BENEFICO --> POSSO DIMINUIRE KP E DIMINUISCO LA
 % SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 50e5; % 2 atm
-xIn = 1; % m air chamber lenght initial
+pIn = 21e5; % 2 atm
+xIn = 1.2; % m air chamber lenght initial
 Aa = pi*.15^2;
-Ab = pi*.2^2;
+Ab = pi*.20^2;
 Kf = 0;
-Kp = 40e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Kp = 58e5; % 0.5 atm per 1 m/s of stroke compression speed;
 Lp_extended =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha0));
 
 %% differential equation
@@ -72,10 +72,10 @@ title("Reaction acceleration(g's)");
 subplot(2,2,3);
 plot(t,pa/1e5);hold on;plot(t,pb/1e5);
 ylabel("press, atm");
-yyaxis right;
-ylabel("Piston stroke, m");
+% yyaxis right;
+% ylabel("Piston stroke, m");
 title("<-Pressure and Piston stroke->");
-plot(t,x,"k");
+% plot(t,x,"k");
 
 subplot(2,2,4);
 plot(t,Fp);
