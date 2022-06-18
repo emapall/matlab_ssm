@@ -6,51 +6,68 @@
 clear
 materialdata % load material properties (info >> help materialdata)
 
-%% parametri Maschio (Gamba)
+%% parametri 
 
 P = .6; % force [MN] 
-Dcm = 3.5;% hole diameter [cm]
+Dcm = 5;% hole diameter [cm]
+
+alphaM = 0; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
+alphaF = 45; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
+materialindexM = 5;
+materialindexF = 5;
+materialindexP= 6 ;
+deltaM = 1.5; % typical (e/D), e: outer lug radius 
+deltaF=1.5;
+tauM = 2.5; % D/t, t: lug thickness
+tauF = 5; % D/t, t: lug thickness
+psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed
+gap=0;
+%% Maschio (Gamba)
 
 PM=P;
-alpha = 0; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
-materialindexM = 5;
+[FS_totM,FS_all_axM,~,massIndexM] = LugStrength(P,alphaM,Dcm,deltaM,tauM,psi,materialindexM);
 
-
-delta = 1.5; % typical (e/D), e: outer lug radius 
-tauM = 2.2; % D/t, t: lug thickness
-psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed
-
-[FS_totM,FS_all_axM,~,massIndexM] = LugStrength(P,alpha,Dcm,delta,tauM,psi,materialindexM);
-
-%% parametri Femmina (Razzo)
+%% Femmina (Razzo)
 
 PF = P/2; % force [MN] 
-alphaF = 25; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
-
-materialindexF = 5;
-tauF = 4; % D/t, t: lug thickness
-
-[FS_totF,FS_all_axF,FS_all_trF,massIndexF] = LugStrength(PF,alphaF,Dcm,delta,tauF,psi,materialindexF);
-massindexF=2*massIndexF;
+[FS_totF,FS_all_axF,FS_all_trF,massIndexF] = LugStrength(PF,alphaF,Dcm,deltaF,tauF,psi,materialindexF);
+massIndexF=2*massIndexF;
 %% nominal Joint strength
 
 PuJ_nom=min([FS_totM,FS_totF]*P);
 
 %% pin strength
-materialindexP=1;
+
 Dm=Dcm/100;
-gap=0;
+Dp=Dm*psi;
 
-Pus_P=2*(pi/4*(Dm*psi)^2)*materials(materialindexP).properties(4)*6.89476;
+Fsu_P=materials(materialindexP).properties(4)*6.89476;
+Ftu_P=materials(materialindexP).properties(2)*6.89476;
+rho_P=materials(materialindexP).properties(1)*27679.9047;
+e_P=materials(materialindexP).properties(7);
 
+if e_P > 5
+    kb=1.56;
+else
+    kb=1;
+end
 
-Mu_P=pi*(Dm*psi)^3/32*1.56*materials(materialindexP).properties(2)*6.89476;
-Larm=Dm*tauM/2+Dm*tauF/4+gap;
+% shear critical value
+Pus_P=2*(pi/4*(Dp)^2)*Fsu_P;
+
+% bending critical value
+Mu_P=pi*(Dp)^3/32*kb*Ftu_P; %
+Larm=Dp/tauM/4+Dp/tauF/2+gap;
 Pub_P=2*Mu_P/Larm;
 
 strongPin=sum(Pub_P>=[PuJ_nom Pus_P]);
 
-%problemo+pin debole
+massIndexP=Dp^3*(1/tauM+2/tauF)*rho_P;
+%problemo+pin debole, risolto: scritta male la formla di Larm
+
+FSJoint=PuJ_nom/P
+massIndexJoint=massIndexF+massIndexM+massIndexP
+
 
 
 
