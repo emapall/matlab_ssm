@@ -1,11 +1,14 @@
 clear all; close all;
 %% Variables initialization
-global rocketMass g d Lss Ls mu_din  h0 dxMaxFoot; %alpha0
-rocketMass = 50000; % 10 tons?
+global rocketMass g d Lss Ls mu_din  h0 dxMaxFoot thetaPS; %alpha0
+rocketMass = 25000; % 10 tons?
 g = 10; %m/s^2
 % geometric parameters
-d = 4; %m
-Ls = 7; % m, estimated from picture
+dv = 5; %m
+dh = .70;
+d=sqrt(dv.^2+dh.^2);
+thetaPS = atan(dv./dh);
+Ls = 9; % m, estimated from picture
 h0 = 4; % m, distance of secondary strut joint from footpads plane
 a = 0.0; % m
 Lss = Ls-a;
@@ -19,13 +22,14 @@ v_vert0 = -3; %m/s
 % AUMENTARE LA CORSA E' BENEFICO --> POSSO DIMINUIRE KP E DIMINUISCO LA
 % SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 21e5; % 2 atm
+pIn = 20e5; % 2 atm
 xIn = 1.2; % m air chamber lenght initial
-Aa = pi*.15^2;
-Ab = pi*.20^2;
+Aa = pi*.10^2;
+Ab = pi*.14^2;
 Kf = 0;
-Kp = 58e5; % 0.5 atm per 1 m/s of stroke compression speed;
-Lp_extended =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha0));
+Kp = 60e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Lp_extended =sqrt(d^2+Lss^2-2*d*Lss*cos(alpha0 + thetaPS));
+
 
 %% differential equation
 time_extremes = [0 10];
@@ -60,7 +64,7 @@ end
 
 %% graphics: 
 f1 = figure;
-sgtitle("Quantities vs time(s)");
+sgtitle("Quantities vs time(s)","FontSize",20);
 subplot(2,2,1);
 plot(t,y(:,4));
 title("Vertical position(m)");
@@ -72,14 +76,17 @@ title("Reaction acceleration(g's)");
 subplot(2,2,3);
 plot(t,pa/1e5);hold on;plot(t,pb/1e5);
 ylabel("press, atm");
-% yyaxis right;
-% ylabel("Piston stroke, m");
+yyaxis right;
+ylabel("Piston stroke, m","Color","k");
+
 title("<-Pressure and Piston stroke->");
-% plot(t,x,"k");
+plot(t,x,"k");
+legend("Air press.","Oil press.","Piston stroke");
 
 subplot(2,2,4);
 plot(t,Fp);
 title("Piston Force");
+
 
 %% call to animation function:
 
@@ -96,3 +103,20 @@ title("Piston Force");
 %     xaxis([0 9]);
 %     hold off;pause(dt(i));
 % end
+
+
+%%
+figure;
+plot(t,90-rad2deg(phi+alpha));
+title("Beta - primary to secondary leg angle ");
+xlabel("t-sec");
+ylabel("beta - deg");
+
+figure;hold on;
+title("Phi and alpha vs time ");
+xlabel("t-sec");
+ylabel("deg ");
+plot(t,rad2deg(phi));
+plot(t,rad2deg(alpha));
+legend("Phi","alpha");
+

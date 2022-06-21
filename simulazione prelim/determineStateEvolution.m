@@ -2,15 +2,16 @@ function [Lp, Lpdot,phi,Fp,pa,pb,Fsy,Fsx,R,Rx,x,dxFootdot] = determineStateEvolu
 % given the state in the differential equation for the rocket, returns the
 % relevant variables to determine the state of the rocket and its evolution
 
-global d Lss Ls mu_din dxMaxFoot;
+global d Lss Ls mu_din dxMaxFoot thetaPS;
 
 
 alpha = asin(y(4)/Ls);
 alphadot = y(2)/Ls/cos(alpha);
 % FIRST: CALCULATE L_PRIMARY, L_PRIMARY DOT, AND PRIMARY FORCE
-Lp =sqrt(d^2+Lss^2+2*d*Lss*sin(alpha)); % cos(90+alpha) = -sin(alpha)
-phi = acos(-(Lss^2-d^2-Lp^2)/Lp/d/2); % cosine theorem: Lss^2 = d^2+Lp^2-2Lp*d*cos(phi)
-Lpdot = d*Lss*cos(alpha)/Lp*alphadot;
+Lp =sqrt(d^2+Lss^2-2*d*Lss*cos(alpha + thetaPS));
+% alpha >0 for leg under the horizon
+phi = acos((+d^2+Lp^2-Lss^2)/Lp/d/2) + thetaPS - pi/2; % cosine theorem: Lss2 = d2+Lp2-2 d Lp (PHIPv+(90 -thetaPS)) 
+Lpdot = d*Lss*sin(alpha + thetaPS)/Lp*alphadot;
 
 vxFoot = -Ls.*sin(alpha).*alphadot;
 dxFoot = y(5);

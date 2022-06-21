@@ -9,8 +9,8 @@ hy = rRocket/sqrt(2);
 
 % From dynamic sim: 
 theta = -deg2rad(25.3452); % from sim
-Fx =  5.2734e+05; % 2.0144e+05;%
-R = -2.4978e+05; %-1.2297e+05;%
+Fx =  5.2734e+05/2; % 2.0144e+05;%
+R = -2.4978e+05/2; %-1.2297e+05;%
 % Fp = cose; 
 % Bisognerebbe fare la somma vettoriale di tutte le forze 
 hz = -(Lsv-del)*sin(theta);
@@ -82,7 +82,7 @@ Mb = max(abs([M_loc(1),M_loc(2)]));
 
 rho = 0.05:0.001:0.25;
 
-vm_coeff = (1+Mb./rho/N).^2+3*((Mt./rho+4*T)/N).^2;
+vm_coeff = (1+Mb./rho/N).^2+3*((Mt./rho+2*T)/N).^2;
 % sigma_y = 600E6;
 k = 1./sqrt(vm_coeff);
 
@@ -110,11 +110,14 @@ weight = mat_dens * N/sigma_yeld./k*beamL;
 % figure;
 subplot(2,1,1); hold on;
 plot(rho*100,weight);
+% legend("Steel - 600 Mpa","Carbon Fiber - 1500 Mpa");
 % title("Weight (kg) vs radius of section (cm)");
 
 subplot(2,1,2); hold on;
 t = N/sigma_yeld./k/2/pi./rho;
 plot(rho*100,t*1000);
+legend("Steel - 600 Mpa","Carbon Fiber - 1500 Mpa");
+
 % title("Tickness(mm) vs radius of section(cm)");
 
 % sgtitle("Carbon fiber");
