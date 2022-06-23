@@ -4,18 +4,28 @@ global rocketMass g d Lss Ls mu_din  h0 dxMaxFoot thetaPS; %alpha0
 rocketMass = 25000; % 10 tons?
 g = 10; %m/s^2
 % geometric parameters
-dv = 5; %m
-dh = .70;
+% phiSC=88.07; % [deg] (from "Angolo_chiusura_distanze_giunti")%
+
+phiS0=30; % [deg] instant before touchdown 
+
+Ls = 9; % m, estimated from picture, design choice
+alpha0 = deg2rad(30); %[deg] estimated from picture,design choice
+h0 = Ls*sin(alpha0); % m, distance of secondary strut joint from footpads plane
+CT=0.5; % design choice
+CA=0; % design choice
+a = CT+CA; % m
+
+Lss = Ls-a;
+Lsp = Ls-CT;
+
+dv = 0.5*Lsp; %m % design choice
+dh = .5030; % (from "Angolo_chiusura_distanze_giunti")
 d=sqrt(dv.^2+dh.^2);
 thetaPS = atan(dv./dh);
-Ls = 9; % m, estimated from picture
-h0 = 4; % m, distance of secondary strut joint from footpads plane
-a = 0.0; % m
-Lss = Ls-a;
 mu_din = 0.7;
 dxMaxFoot = 0.001;
 % initial conditions
-alpha0 = asin(h0/Ls); %estimated from picture
+
 v_vert0 = -3; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper
@@ -23,11 +33,11 @@ v_vert0 = -3; %m/s
 % SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
 pIn = 20e5; % 2 atm
-xIn = 1.2; % m air chamber lenght initial
-Aa = pi*.10^2;
-Ab = pi*.14^2;
+xIn = 1.3; % m air chamber lenght initial
+Aa = pi*.12^2;
+Ab = pi*.15^2;
 Kf = 0;
-Kp = 60e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Kp = 65e5; % 0.5 atm per 1 m/s of stroke compression speed;
 Lp_extended =sqrt(d^2+Lss^2-2*d*Lss*cos(alpha0 + thetaPS));
 
 
@@ -106,17 +116,23 @@ title("Piston Force");
 
 
 %%
-figure;
-plot(t,90-rad2deg(phi+alpha));
-title("Beta - primary to secondary leg angle ");
-xlabel("t-sec");
-ylabel("beta - deg");
+% figure;
+% plot(t,90-rad2deg(phi+alpha));
+% title("Beta - primary to secondary leg angle ");
+% xlabel("t-sec");
+% ylabel("beta - deg");
+% 
+% figure;hold on;
+% title("Phi and alpha vs time ");
+% xlabel("t-sec");
+% ylabel("deg ");
+% plot(t,rad2deg(phi));
+% plot(t,rad2deg(alpha));
+% legend("Phi","alpha");
 
-figure;hold on;
-title("Phi and alpha vs time ");
-xlabel("t-sec");
-ylabel("deg ");
-plot(t,rad2deg(phi));
-plot(t,rad2deg(alpha));
-legend("Phi","alpha");
-
+dLOE0S=(x(1)-x(end))/Ab*Aa
+dLOEmax=(x(1)-min(x))/Ab*Aa
+phiPS=90-phi(end)*180/pi
+phiSS=alpha(end)*180/pi
+betaS=90-rad2deg(phi(end)+alpha(end))
+Lps=Lp(end)

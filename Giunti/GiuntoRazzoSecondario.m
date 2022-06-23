@@ -1,22 +1,21 @@
 % Design giunto strutsecondario-razzo, sollecitato in trazione. 
 % Air Force Method (https://mechanicalc.com/reference/lug-analysis#air-force-method)
-% sintax;
-% function [FS_tot,FS_all_ax,FS_all_tr,massIndex] = LugStrength(alpha,D[cm],delta,tau,psi,materialindex)
 
-function [FS_tot,FS_all_ax,FS_all_tr,massIndex] = LugStrength(P,alpha,D,delta,tau,psi,materialindex)
 
+% function [FS_tot,massIndex] = LugStrength(alpha,D,delta,tau,psi,materialindex)
+clear
 materialdata % load material properties (info >> help materialdata)
 
 %% parametri [inches, pounds]
+global P
+P = .6; % force [MN] 
+alpha = 25; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
+materialindex = 5;
 
-% P = .6; % force [MN] 
-% alpha = 25; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
-% materialindex = 5;
-
-% D = 3.5;% hole diameter [cm]
-% delta = 1.5; % typical (e/D), e: outer lug radius 
-% tau = 2; % D/t, t: lug thickness
-% psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed
+D = 3.5;% hole diameter [cm]
+delta = 1.5; % typical (e/D), e: outer lug radius 
+tau = 2; % D/t, t: lug thickness
+psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed
 
 
 % data processing
@@ -24,9 +23,9 @@ D=D/100;
 rho=materials(materialindex).properties(1)*27679.9047; %[kg/m^3]
 Ftu=materials(materialindex).properties(2)*6.89476; %[MPa]
 Fty=materials(materialindex).properties(3)*6.89476; %[MPa]
-Fcy=materials(materialindex).properties(5)*6.89476; %[MPa]
-E=materials(materialindex).properties(6)*6.89476; %[GPa]
-e=materials(materialindex).properties(7);
+Fcy=materials(materialindex).properties(4)*6.89476; %[MPa]
+E=materials(materialindex).properties(5)*6.89476; %[GPa]
+e=materials(materialindex).properties(6);
 
 x=1/(2*delta);
 phi1=Ftu/Fty;
@@ -61,7 +60,7 @@ phi1v=[.6 .8 1];
            0 .23 .42 .57 .76
            0 .2  .35 .47 .63]; 
        
-Kn=interp3(X,Y,Z,V,x,phi2,1/phi1,'spline');
+Kn=interp3(X,Y,Z,V,1/2/delta,phi2,1/phi1,'spline');
 
 %% Kbr data
 if delta>=1.5
@@ -86,7 +85,7 @@ Pu_ax_expected=Pax;
 
 % net section tension failure
 Pnu_L=Ftus*Kn*D^2*(2*delta-1)/tau;
-FS_NST=Pnu_L/Pu_ax_expected;
+FS_NST=Pnu_L/Pu_ax_expected
 
 % lug bearing faiulure
 if delta<1.5
@@ -94,11 +93,11 @@ if delta<1.5
 else
     Pbru_L=Ftus*Kbr*D^2/tau;
 end
-FS_LBR=Pbru_L/Pu_ax_expected;
+FS_LBR=Pbru_L/Pu_ax_expected
 
 % bushing bearing failure
 Pu_B=Fcu*D^2*psi/tau;
-FS_BBR=Pu_B/Pu_ax_expected;
+FS_BBR_ax=Pu_B/Pu_ax_expected
 
 % Margin of Safeties
 % NST_MoS=Kn/Kn_crit-1
@@ -106,9 +105,9 @@ FS_BBR=Pu_B/Pu_ax_expected;
 % BBR_Mos=psi/psi_crit-1
 
 Paxu_L_B=min([Pu_B Pbru_L Pnu_L]); 
-FS_all_ax=[FS_NST,FS_LBR,FS_BBR];
+
 % mass index
-massIndex=D^3*(delta-1/2)*(delta+1/2)*rho/tau;
+massIndex=D^3*(delta-1/2)*(delta+1/2)*rho/tau
 
 %% transverse - oblique loading
 if alpha~=0
@@ -123,7 +122,6 @@ if alpha~=0
     end
     
     Ptru_L=Ktr*Ftus*D^2/tau;
-    FS_TRL=Ptru_L/Ptr;
     
     Ptru_L_B=min([Pu_B Ptru_L]); 
     
@@ -131,13 +129,24 @@ if alpha~=0
     
     Pult=Pax_ult*(1+(tand(alpha))^2)^.5;
     
-    FS_all_tr=[FS_TRL,FS_BBR];
+    
 
 else 
-    FS_all_tr=[];
+    
     Pult=Paxu_L_B;
     
 end
 FS_tot=Pult/P;
 
 % end
+
+
+%% pin strenght
+
+
+
+
+
+
+
+
