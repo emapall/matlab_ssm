@@ -5,18 +5,18 @@ close
 RR = 1.5;
 Ls = 9;
 LHS = 0.20;
-IBSR= .15;
+IBSR= .14;
 tp=.015;
 sw=.01;
-PSR=IBSR+4*tp+3*sw;
+PSR=IBSR+4*tp+4*sw;
 
 SSR = 0.15;
 CCL = IBSR+SSR;
  
 % da altre simul
-dLOE0S=0.3243;
+dLOE0S=0.4089;
 SSR=.15;
-phiSS=20.7494;
+phiSS=19.3239;
 
 %nuovi input, da cambiare se viene suggerito un cambio di design
 LHPR=PSR+0.12;
@@ -27,7 +27,7 @@ IBEc=IBEs+0.9*dLOE0S; %design
 
 
 % geometria gambe secondarie
-Lss =Ls - CA - CT;
+Lss = Ls - CA - CT;
 Lsp = Ls - CT;
 RRp = 1*SSR+RR; %Radius Rocket prime (')
 DO = sqrt(RRp.^2+CCL.^2);
@@ -54,9 +54,9 @@ htA=SSR-CA*tand(90-phiSC);
 
 Gp_vect=[dh;dv;0];
 
-hGsp_arr=linspace(-0.3*SSR,0.95*(htA-IBSR),20);
+hGsp_arr=linspace(-0.3*SSR,0.95*(htA-IBSR),10);
 Ls_vect=rotz(deg2rad(phiSC))'*[Ls;0;0];
-LssC_vect=rotz(deg2rad(phiSC))'*[ones(1,20)*Lss;hGsp_arr;zeros(1,20)];
+LssC_vect=rotz(deg2rad(phiSC))'*[ones(1,10)*Lss;hGsp_arr;zeros(1,10)];
 alphaPR_arr=atand((Gp_vect(1)-LssC_vect(1,:))./(LssC_vect(2,:)-Gp_vect(2)));
 A2spigoloPSR_vect=[-PSR;-IBEc;0];
 
@@ -65,7 +65,7 @@ plot([0 Ls_vect(1)],[0 Ls_vect(2)],'--k')
 xline(dh-LHPR);
 hold on
 axis equal
-for i=1:20
+for i=1:10
 A2spigoloPSR_points(:,i)=LssC_vect(:,i)+rotz(deg2rad(alphaPR_arr(i)))'*A2spigoloPSR_vect;
 if A2spigoloPSR_points(1,i)>(dh-LHPR)
     disp('sku sku')
@@ -112,5 +112,16 @@ LHPS=ceil(110*IBSR/tand(gammaLEmax))/100;
 gammaTEmax=90-phiPS-alphaPR;
 LHP=ceil(110*PSR/tand(gammaTEmax))/100;
 
-lpm=Lpc-IBEc-LHP;
+lpm=Lpc-IBEc-LHP
+%y=t+w/2+2sltot+kw/2
+y=(3*lpm-(Lps-Lpc))/3;
+lmw=.051;
+kw=.025;
+lid_ax_length=kw/2;
+sl=.05;
+sltot=2*sl+lid_ax_length;
+offsettin=y-lmw/2-2*sltot-kw/2
 
+lt1=lpm-offsettin
+lt2=lt1-sltot-kw/2-lmw/2
+lbe=lt2-sltot-kw/2-lmw/2

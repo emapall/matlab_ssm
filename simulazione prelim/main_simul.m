@@ -19,22 +19,22 @@ Lss = Ls-a;
 Lsp = Ls-CT;
 
 dv = 0.5*Lsp; %m % design choice
-dh = .5030; % (from "Angolo_chiusura_distanze_giunti")
+dh = .49630; % (from "Angolo_chiusura_distanze_giunti")
 d=sqrt(dv.^2+dh.^2);
 thetaPS = atan(dv./dh);
 mu_din = 0.7;
 dxMaxFoot = 0.001;
 % initial conditions
 
-v_vert0 = -3; %m/s
+v_vert0 = -5; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
 %% damper
 % AUMENTARE LA CORSA E' BENEFICO --> POSSO DIMINUIRE KP E DIMINUISCO LA
 % SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 20e5; % 2 atm
-xIn = 1.3; % m air chamber lenght initial
-Aa = pi*.12^2;
+pIn = 25e5; % 2 atm
+xIn = 1.5; % m air chamber lenght initial
+Aa = pi*.125^2;
 Ab = pi*.15^2;
 Kf = 0;
 Kp = 65e5; % 0.5 atm per 1 m/s of stroke compression speed;

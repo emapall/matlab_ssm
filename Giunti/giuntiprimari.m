@@ -4,27 +4,27 @@ materialdata;
 
 %inputs
 %geometria bielle
-betaC=4.3;
-betaS=23.7;
-phiPS=44.5;
-alphaPR=2.4;
+betaC=4.32;
+betaS=24.03;
+phiPS=43.35;
+alphaPR=2.39;
 SSR=0.15;
 LHPR=0.36;
 hR=LHPR;
 hS=SSR;% more or less
 
 % buffer details
-rin=.1;
-rext=.14;
+rin=.125;
+rext=.15;
 Aa=rin^2*pi; %[m^2]
 Ab=rext^2*pi;
 Pa0=3; %[MPa]
-Pbsmax=15; %[10^6 N]
+Pbsmax=17; %[10^6 N]
 
 % buffer config
-lambda=0.5; % rapporto tra dLEO0S, dLEO0c, possibly <0
+lambda=0.9; % rapporto tra dLEO0S, dLEO0c, possibly <0
 dLOE0S=0.4;
-xin=1.2;
+xin=1.5;
 
 IBEs=0.9;
 IBE0=IBEs+dLOE0S;
@@ -33,9 +33,9 @@ IBEc=IBEs+lambda*dLOE0S;
 %materials of bushing , biella and pin, 
 materialindexRod=1;
 materialindexPin=1;
-D=.03; %hole diameter []
+D=.036; %hole diameter []
 delta=0.7; %e/D
-tau=1.2; %D/t
+tau=1.3; %D/t
 psi=0.9; %Dp/D
 
 FcyRod=materials(materialindexRod).properties(5)*6.89476;
@@ -44,7 +44,6 @@ rhoRod=materials(materialindexRod).properties(1)*27679.9047;
 Erod=materials(materialindexRod).properties(6)*6894.76; %[MPa]
 FSn=1.75;
 % materialindexBush=materialindexRod; hp: bushing and rod same material
-
 
 
 xc=xin-Ab/Aa*dLOE0S*lambda;
