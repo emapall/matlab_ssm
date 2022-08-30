@@ -1,6 +1,6 @@
 clear all; close all;
-% Fsx =  5.2734e+05;
-% Fsy = -2.4978e+05;
+% Fsx =  5.2734e+05; 4.0070e+05  
+% Fsy = -2.4978e+05; -5.5703e+04
 % From cad:
 Lsv = 7;
 del = 0.3;
@@ -9,8 +9,8 @@ hy = rRocket/sqrt(2);
 
 % From dynamic sim: 
 theta = -deg2rad(25.3452); % from sim
-Fx =  5.2734e+05/2; % 2.0144e+05;%
-R = -2.4978e+05/2; %-1.2297e+05;%
+Fx =  4.0070e+05/2; % 2.0144e+05;%
+R = -5.5703e+04/2; %-1.2297e+05;%
 % Fp = cose; 
 % Bisognerebbe fare la somma vettoriale di tutte le forze 
 hz = -(Lsv-del)*sin(theta);
@@ -121,3 +121,4 @@ legend("Steel - 600 Mpa","Carbon Fiber - 1500 Mpa");
 % title("Tickness(mm) vs radius of section(cm)");
 
 % sgtitle("Carbon fiber");
+
