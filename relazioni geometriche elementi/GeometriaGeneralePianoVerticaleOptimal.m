@@ -1,28 +1,40 @@
 clear
 close
-Lpc=4;
-% LHP=.5;
-LHPS=.2;
 
-Ls=10;
+%nuovi input
+
+ Lpc=4;
+ alphaPR=4.95;
+ 
+%  IBEs=0.9;
+
+% Lpc=4;
+
+% IBEs=1.1;
+
 CA=.1;
-CT=.2;
-SSR=.2;
-phiSC=87;
-phiSS=30;
-IBEc=.9;
-IBEs=1.2;
+% dvobj=
+% dhobj=
+% LHP=.5;
+% LHPS=.2;
 
-IBSR=.14;
-tp=.02;
+%da simulazioni precedenti
+% dLOE=0.4; 
+Lss=9;
+CT=.2;
+SSR=.15;
+phiSC=87.97;
+phiSS=20.78;
+IBSR=.14; %Rext simulazione main
+tp=.015;
 sw=.01;
 
-ltm=.3;
 
-Lss=Ls-CT-CA;
-
+Ls=Lss+CT+CA;
+IBE0=IBEs+dLOE;
 PSR=IBSR+4*tp+3*sw;
-alphaPR=atand((PSR-IBSR)/IBEc);
+
+% alphaPR=atand((PSR-IBSR)./IBE0);
 
 
 % lunghezze data dalla geometria
@@ -38,7 +50,7 @@ hGps= htA-IBSR*cosd(betaC); %hA
 Gps_vect=[Lss;hGps;0]; % when the secondary leg is aligned with the horizontal plane
 GpsC_vect=rotz(deg2rad(phiSC))'*Gps_vect;
 LssC_vect=rotz(deg2rad(phiSC))'*[Lss;0;0];
-OGps=norm(Gps_vect);
+GsGps=norm(Gps_vect);
 % xGps=Lss*cosd(phiSC)-hGps*cosd(alphaPR) sbagliato lol
 % yGps=Lss*sind(phiSC)-hGps*sind(alphaPR)
 Gp_vect=GpsC_vect+-rotz(deg2rad(alphaPR))'*[0;Lpc;0];
@@ -59,24 +71,31 @@ Lps=norm(Lps_vect);
 phiPS=acosd(Lps_vect'*[1;0;0]/Lps);
 
 LssS_vect=rotz(deg2rad(-phiSS))'*[Lss;0;0];
-betaS=acosd((LssS_vect'*Lps_vect)/(Lss*Lps))
+betaS=acosd((LssS_vect'*Lps_vect)/(Lss*Lps));
 % phiSS=acosd((OGps^2+d^2-Lps^2)/(OGps*d))+atand(hGps/Lss)-phiSC
 
-lpm=((Lps-Lpc)+IBEc-IBEs)/3+(tp-ltm);
-LHP=Lpc-IBEc-lpm
+
+
+
 % gammaLE+betaC<90-betaS
-gammaLE=atand(IBSR/LHPS)
-gammaLEmax=90-betaS-betaC
-
+% gammaLE=atand(IBSR/LHPS)
+gammaLEmax=90-betaS-betaC;
+LHPSmin=1.1*IBSR/tand(gammaLEmax);
 % gammaTE+alphaPR<90-phiPS
-gammaTE=atand(PSR/LHP)
-gammaTEmax=90-phiPS-alphaPR
+% gammaTE=atand(PSR/LHP)
+gammaTEmax=90-phiPS-alphaPR;
+LHPmin=1.1*PSR/tand(gammaTEmax);
 
-if gammaLE<gammaLEmax && gammaTE<gammaTEmax
-    disp('design funzionante')
-else
-    disp('problema alle bielle')
-end
+lpm_max=Lpc-IBE0-LHPmin;
+
+% ltm=.3; %ingombro meccanismo bloccaggio tlescopico
+% lpm=((Lps-Lpc)+IBEc-IBEs)/3+(tp-ltm);
+% LHP=Lpc-IBEc-lpm
+% if gammaLE<gammaLEmax && gammaTE<gammaTEmax
+%     disp('design funzionante')
+% else
+%     disp('problema alle bielle')
+% end
 
 plot([0,LssS_vect(1)],[0,LssS_vect(2)],'--r')
 hold on
