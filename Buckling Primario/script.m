@@ -1,6 +1,6 @@
 % symbolic variables initialization
-clear all;
-close all;
+clear 
+close all
 
 Li = sym('L_i','positive');
 L1 = sym('L_1','positive');
@@ -30,7 +30,7 @@ BCMatrix=[1, 0, 0, 0, 0, 0, 0, 0
     cos(k1*L1), sin(k1*L1), -1, 0, 0, 0, 0, 0
     0, 0, cos(k2*L2), sin(k2*L2), -1, 0, 0, 0
     0, 0, 0, 0, cos(k3*L3), sin(k3*L3), 0, -1
-    0, 0, 0, 0, 0, 0, L4, 1]
+    0, 0, 0, 0, 0, 0, L4, 1];
 
 %%
 % we write the inclination CE
@@ -57,7 +57,7 @@ fB33=subs(fBi,[ki Li gi],[k3 L3 g3]);
 
 CEMatrix=[fA11 fB11 fA21 fB21 0 0 0 0
     0 0 fA22 fB22 fA32 fB32 0 0
-    0 0 0 0 fA33 fB33 -1 0]
+    0 0 0 0 fA33 fB33 -1 0];
 %%
 % so, we have the matrix we want to find the determinant of:
 
@@ -66,33 +66,33 @@ M=[BCMatrix;CEMatrix];
 % e mo famo ildeterminante
 
 detM= det(M);
-detM=simplify(detM)
+detM=simplify(detM);
 g = 1;
 %%
-detM=subs(detM,[g1 g2 g3],[g g g])
-L1=2.5 %[m]
+detM=subs(detM,[g1 g2 g3],[g g g]);
+L1=2.5 %[m];
 
-rho=0.9
-DL = L1/10
+rho=0.9;
+DL = L1/10;
 
-L2n = L1-DL
-L3n = L1-2*DL
-L4n = 2*L1 -7*DL
+L2n = L1-DL;
+L3n = L1-2*DL;
+L4n = 2*L1 -7*DL;
 
-k2n = k1*rho^(-1/2)
-k3n = k1*rho^(-1)
+k2n = k1*rho^(-1/2);
+k3n = k1*rho^(-1);
 
 
 % detM=subs(detM,[L2 L3 L4 k2 k3],[L2n L3n L4n k2n k3n])
 % detM=subs(detM,L2,L1-DL)
-detM=subs(detM,"L_1",L1)
-detM=subs(detM,L2,L2n)
-detM=subs(detM,L3,L3n)
-detM=subs(detM,L4,L4n)
-detM=subs(detM,k2,k2n)
-detM=subs(detM,k3,k3n)
+detM=subs(detM,"L_1",L1);
+detM=subs(detM,L2,L2n);
+detM=subs(detM,L3,L3n);
+detM=subs(detM,L4,L4n);
+detM=subs(detM,k2,k2n);
+detM=subs(detM,k3,k3n);
 
 %%
-k_1 = 0:0.01:1
+k_1 = 0:0.01:10;
 detEval = eval(subs(detM,"k_1",k_1));
 plot(k_1,detEval);

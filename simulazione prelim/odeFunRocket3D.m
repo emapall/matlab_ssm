@@ -21,7 +21,7 @@ else
 %     disp(t);
 end
 ydot(1) = 0; % we don't care about x in this case
-ydot(3) = 0; % =y(1);
+ydot(3) = 0; % like y dot (1);
 ydot(4) = y(2);
 ydot(5) = dxFootdot;
 
