@@ -1,16 +1,16 @@
 clear all; close all;
 %% Variables initialization
 global rocketMass g d Lsp Ls mu_din h0 dxMaxFoot thetaPS; %alpha0
-rocketMass = 25000; % 10 tons?
+
+rocketMass = 7000; %[kg] ~ 25 tons / 4 legs
 g = 9.81; %m/s^2
 
 % geometric parameters
-% phiSC=88.07; % [deg] (from "Angolo_chiusura_distanze_giunti")%
 
 phiS0=30; % [deg] instant before touchdown 
 
 Ls = 9; % m, estimated from picture, design choice
-alpha0 = deg2rad(phiS0); %[deg] estimated from picture,design choice
+alpha0 = deg2rad(phiS0); %[deg] estimated from Falcon9 picture,design choice
 h0 = Ls*sin(alpha0); % m, distance of secondary strut joint from footpads plane
 CT=0.5; % design choice
 AT=0.5; % design choice
@@ -20,7 +20,7 @@ Lsp = Ls-AT;
 Lspp = Ls-CT;
 
 dv = 4.25; %m % design choice
-dh = .49630; % (from "Angolo_chiusura_distanze_giunti")
+dh = .5063; % (from "Angolo_chiusura_distanze_giunti")
 d=sqrt(dv.^2+dh.^2);
 thetaPS = atan(dv./dh);
 
@@ -30,18 +30,18 @@ dxMaxFoot = 0.001;
 
 v_vert0 = -5; %m/s
 % alphadot0 = v_vert0/Ls/cos(alpha0);
-%% damper
+%% damper parameters
 % AUMENTARE LA CORSA E' BENEFICO --> POSSO DIMINUIRE KP E DIMINUISCO LA
 % SOVRAPPRESS MAX INIZIALE!
 global pIn xIn Aa Ab Kf Kp Lp_extended; 
-pIn = 25e5; % 2 atm %initial pressure 
-xIn = 1.5; % m air chamber initial length % < lb_min-1.1*LHPS
-Aa = pi*.125^2; % outer to inner chamber valve area
-Ab = pi*.15^2; % inner to outer chamber valve area
+pIn = 1.25e6; %  initial pressure [Pa]
+xIn = 1.5; % air chamber initial length [m]  % < lb_min-1.1*LHPS
+Aa = pi*.125^2; % outer to inner chamber valve area [m^2]
+Ab = pi*.15^2; % inner to outer chamber valve area [m^2]
 Kf = 0;
-Kp = 65e5; % 0.5 atm per 1 m/s of stroke compression speed;
+Kp = 1.25e6; % pressure loss coefficient [Pa/(m/s)];
 Lp_extended =sqrt(d^2+Lsp^2-2*d*Lsp*cos(alpha0 + thetaPS));
-
+plots=1;
 
 %% differential equation
 time_extremes = [0 10];
@@ -73,8 +73,11 @@ for i=1:N
     end
     end
 end
+[~,i4]=max(abs(R));
+reaction_g_max=R(i4)/rocketMass/g
 
 %% graphics: 
+if plots==1
 f1 = figure;
 sgtitle("Quantities vs time(s)","FontSize",20);
 
@@ -86,7 +89,10 @@ title("Vertical position(m)");
 %
 subplot(2,2,2);
 plot(t,R/rocketMass/g);
-title("Reaction acceleration(g's)");
+
+title("Reaction acceleration [g]");
+txt=(['Maximum value: ',num2str(round(R(i4)/rocketMass/g*1e2)/1e2),' g']);
+text(5,0.5*R(i4)/rocketMass/g,txt)
 
 %
 subplot(2,2,3);
@@ -106,29 +112,56 @@ legend("Air pressure","Oil pressure","Piston stroke");
 %
 subplot(2,2,4);
 plot(t,Fp);
-title("Piston Force");
-
-
-%% call to animation function:
-
-%% graphics:
-% dt = diff(t);
-% for i=1:length(t)
-%     plot(nan,nan); hold on;
-%     xLeg = Ls*cos(alpha(i));
-%     dxFoot = y(i,5);
-% %     xLeg = 0;
-%     vxLeg = -Ls.*sin(alpha(i)).*alphadot(i)
-%     plot([xLeg xLeg-dxFoot],[0 -1],"*-");
-%     plot([xLeg+0 xLeg+vxLeg],[0 0],"g-o");
-%     xaxis([0 9]);
-%     hold off;pause(dt(i));
-% end
+title("Damper Force");
 
 
 %%
-% figure;
-% plot(t,90-rad2deg(phi+alpha));
+[~,i1]=max(abs(Fsx));
+[~,i2]=max(abs(Fsy));
+[~,i3]=max(abs(Fp));
+
+figure(2)
+format short
+subplot(2,2,1)
+plot(t,Fsx)
+ylabel('Fsx [N]')
+txt=({['Maximum value: ',num2str(round(Fsx(i1)/1e3)/1e3),' MN'];['Static value: ',...
+    num2str(round(Fsx(end)/1e3)/1e3),' MN'];['Impact Ratio= ',num2str(Fsx(i1)/Fsx(end))]});
+text(7,0.7*Fsx(i1),txt)
+
+subplot(2,2,2)
+plot(t,Fsy)
+ylabel('Fsy [N]')
+txt=({['Maximum value: ',num2str(round(Fsy(i2)/1e3)/1e3),' MN'];['Static value: ',...
+    num2str(round(Fsy(end)/1e3)/1e3),' MN'];['Impact Ratio= ',num2str(Fsy(i2)/Fsy(end))]});
+text(7,0.7*Fsy(i2),txt)
+
+subplot(2,2,3)
+plot(t,Fp)
+ylabel('Fp [N]')
+txt=({['Maximum value: ',num2str(round(Fp(i3)/1e3)/1e3),' MN'];['Static value: ',...
+    num2str(round(Fp(end)/1e3)/1e3),' MN'];['Impact Ratio= ',num2str(Fp(i3)/Fp(end))]});
+text(7,0.7*Fp(i3),txt)
+
+subplot(2,2,4)
+plot(t,R)
+ylabel('R [N]')
+txt=({['Maximum value: ',num2str(round(R(i4)/1e3)/1e3),' MN'];['Static value: ',...
+    num2str(round(R(end)/1e3)/1e3),' MN'];['Impact Ratio = ',num2str(R(i4)/R(end))]});
+text(7,0.7*R(i4),txt)
+
+%% secondary joint reaction characteristics, to size secondary joint
+figure(3)
+plot(atand(Fsy./Fsx)+180*(Fsx<0),sqrt(Fsx.^2+Fsy.^2))
+xlabel('reaction direction angle with horizontal [deg]')
+ylabel('reaction force modulus')
+title('Secondary Joint reaction analysis')
+% xlim([0 max([Fsx(i1),Fsy(i2)])])
+% ylim([0 max([Fsx(i1),Fsy(i2)])])
+
+
+
+end
 % title("Beta - primary to secondary leg angle ");
 % xlabel("t-sec");
 % ylabel("beta - deg");
@@ -140,7 +173,7 @@ title("Piston Force");
 % plot(t,rad2deg(phi));
 % plot(t,rad2deg(alpha));
 % legend("Phi","alpha");
-
+%%
 % external oil chamber run to constrain IBEs and IBEc
 
 dLOE0S=(x(1)-x(end))/Ab*Aa

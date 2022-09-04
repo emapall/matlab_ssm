@@ -27,6 +27,7 @@ materials(i).form='plate,sheet,strip';
 materials(i).properties=[.286 150 110 40 58 26 18];
 
 %% aluminium
+
 i=i+1;
 materials(i).name='Aluminium_2024 - T4';
 materials(i).form='bar,rod,plate';
@@ -38,6 +39,7 @@ materials(i).form='bar,rod,plate';
 materials(i).properties=[.101 76 64 45 71 10.5 7];
 
 %% titanium
+
 i=i+1;
 materials(i).name='Titanium_6Al-4V - heat treated';
 materials(i).form='plate,sheet';

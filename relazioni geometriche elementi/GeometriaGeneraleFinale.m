@@ -3,7 +3,7 @@
 % from stress analysis and material choice (tp)
 
 clear
-close 
+close all
 
 %% INPUTS
 
@@ -17,7 +17,7 @@ sw=.01; % telescopic shoulder width
 SSR = 0.15; % circumradius of secondary strut beam
 CCL = IBSR+SSR; % clearence at the closed secondary strut contact point
 
-% telescopic locking mechanism specifics 
+% telescopic locking mechanism specifics by design
 ring_width=.051; % axial length locking mechanism casing
 key_width=.025; % key width
 lid_width=key_width/2; % axial length of compressed lid-spring mechanism
@@ -25,21 +25,24 @@ shoulder_length=.05; % shoulder length, the part of the telescopic segment that 
 
 % simulation results
 tp=.015; % thickness of telescopic segment walls
-dLOE0S=0.5612; % length contration of pneumatic segment from 
+dLOE0S=0.395; % length contration of pneumatic segment from 
                % 0 (fully extended, instant before touchdown), 
                % to S (static condition, legs support the weight of the rocket)
-dLOEOmax_stroke=.5739; % maximum contraction
-phiSS=20.0699; % inclination of secondary strut plane wrt ground once the rocket is settled
-Lp0=10.926; % length st touchdown (Lp_extended from main_sim)
+dLOEOmax_stroke=.485; % maximum contraction [m]
+phiSS=22.91; % inclination of secondary strut plane wrt ground once the rocket is settled
+Lp0=10.92; % length st touchdown (Lp_extended from main_sim)
 PSR=IBSR+4*(tp+sw);
 
+wBS=0.064; % width of main rod of p-s joint
+wBR=0.064; % width of main rod of p-r joint
+
 % new inputs, to change iteratively untill a design works
-LHPR=PSR+.12; % distance of Jp axis from rocket plane, the higher the more the buckling risk
+LHPR=PSR +.13; % distance of Jp axis from rocket plane, the higher the more the buckling risk
 CT = 0.5; % horizontal distance (in the sec leg ref frame) from secondary leg tip the closure contact point 
 AT = 0.5; % horizontal distance (in the sec leg ref frame) from secondary leg tip to primary anchor point 
-dv=Ls*0.475; % vertical joint offset (design choice)
+dv= 4.25; % vertical joint offset (design choice)
 IBEs=1.1; % Internal Buffer Excess in the static position 
-IBEc=IBEs+0.5*dLOE0S; % Internal Buffer Excess in the closed position,
+IBEc=IBEs+0.6*dLOE0S; % Internal Buffer Excess in the closed position,
                       % it must be higher than the static one, otherwise the compressive force wouldn't 
                       % decrease sufficiently, and joints (both J_P and
                       % J_SP) would need to react to a force in a direction
@@ -85,7 +88,7 @@ htA=SSR-(CT-AT)*tand(90-phiSC); %available clearence at contact point
 Jp_vect=[dh;dv;0]; % position vector of primary joint in the main reference frame centered in Js
 
 % candidates
-k=15; %n. of candidates
+k=100; %n. of candidates
 hJsp_arr=linspace(-0.4*SSR,0.95*(htA-IBSR),k); % array of differend heights to try, stayng inside 
                                                 % the footprint of the secondary strut on the xz plane
 
@@ -149,12 +152,12 @@ hfs=1.1; %hinge factor of safety, to account for hinge structure width
 
 % leading edge
 gammaLEmax=90-betaS-betaC; % semi angle of the cone available for the leading edge cap (without touching the hinge structure)
-LHPS=ceil(100*hfs*IBSR/tand(gammaLEmax))/100; % lenght of the leading edge cap (Length of Hinge Primary to Secondary)
-
+LHPSprime=ceil(100*hfs*(IBSR/tand(gammaLEmax)))/100; % lenght of the leading edge cap (Length of Hinge Primary to Secondary)
+LHPS=LHPSprime+ceil(100*hfs*wBS/2)/100;
 % tailing edge
 gammaTEmax=90-phiPS-alphaPR; % semi angle of the cone available for the tailing edge cap (without touching the hinge structure)
-LHP=ceil(100*hfs*PSR/tand(gammaTEmax))/100; % lenght of the tailing edge cap (Length of Hinge Primary)
-
+LHPprime=ceil(100*hfs*PSR/tand(gammaTEmax))/100; % lenght of the tailing edge cap (Length of Hinge Primary)
+LHP=LHPprime+ceil(100*hfs*wBR/2/sind(90-abs(phiPS)-abs(alphaPR)))/100;
 %% PRIMARY STRUT SEGMENTS DIMENSION
 lpm=Lpc-IBEc-LHP; %length of main segment
 
@@ -169,21 +172,49 @@ if l_offset_main<=0
     return
 end
 
-% lunghezze segmenti
+% geometria segmenti
+LHP
+LHPS
+l_offset_main
+lpm %lunghezza
+rext_main=PSR; %raggio esterno
+rint_main=PSR-tp; %raggio interno
 
-lpm
 lt1=lpm-l_offset_main
+rext_tel1=rint_main-sw;
+rint_tel1=rext_tel1-tp;
+
 lt2=lt1-l_offset_tel
+rext_tel2=rint_tel1-sw;
+rint_tel2=rext_tel2-tp;
+
 lt3=lt2-l_offset_tel
+rext_tel3=rint_tel2-sw;
+rint_tel3=rext_tel3-tp;
+
 lb_min=IBEs+dLOE0S+2*shoulder_length % minimum internal buffer lenght
+rext_buffer=IBSR;
+rint_buffer=IBSR-tp;
+
+% volumi approssimati (end cap considerati nei segmenti d'estremita')
+
+v_main=(lpm+LHP)*(rext_main^2-rint_main^2)*pi ;
+v_tel1=(lt1)*(rext_tel1^2-rint_tel1^2)*pi ;
+v_tel2=(lt2)*(rext_tel2^2-rint_tel2^2)*pi ;
+v_tel3=(lt3)*(rext_tel3^2-rint_tel3^2)*pi ;
+
+v_prebuffer=v_main+v_tel1+v_tel2+v_tel3;
+v_buffer=(lb_min+LHPS)*(rext_buffer^2-rint_buffer^2)*pi ;
+
+
 
 %% Length of segments for buckling analysis
 
-L1=lpm+LHP-tel_interference/2
-L2=lt1-tel_interference
-L3=lt2-tel_interference
+L1=lpm+LHP-tel_interference/2;
+L2=lt1-tel_interference;
+L3=lt2-tel_interference;
 L4=Lps-L1-L2-L3;
-minimum_buffer_interference_static=lt3+lb_min-L4
+minimum_buffer_interference_static=lt3+lb_min-L4;
 % L4=lt3+IBEs-tel_interference/2
-IBE0=Lp0-L1-L2-L3-lt3+tel_interference/2
+IBE0=Lp0-L1-L2-L3-lt3+tel_interference/2;
 IBEmin=IBE0-dLOEOmax_stroke % some inconsistencies with main_sim due to 4mm discrepancy in total length

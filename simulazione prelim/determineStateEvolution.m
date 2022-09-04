@@ -1,14 +1,26 @@
 function [Lp, Lpdot,phi,Fp,pa,pb,Fsy,Fsx,R,Rx,x,dxFootdot] = determineStateEvolution(t,y)
 % given the state in the differential equation for the rocket, returns the
-% relevant variables to determine the state of the rocket and its evolution
+% istantaneous relevant variables to determine the state of the rocket and 
+% its evolution:
+% Lp: length of primary strut [m]
+% phi: positive angle between rocket surface and primary strut [rad]
+% alpha: positive angle between primary and secondary strut [rad]
+% Fp: traction force in the primary strut it is negative since it's
+%     compression [N] 
+% pa: pressure in gas chamber (and of internal oil chamber) [Pa]
+% pb: pressure in external oil chamber [Pa]
+% Fsx: seconday joint reaction force, x component [N]
+% Fsy: seconday joint reaction force, y component [N]
+% R: ground reaction force, y component [N]
+% Rx: ground reaction force, x component, due to friction between 
+%     footpad and ground [N]
 
 global d Lsp Ls mu_din dxMaxFoot thetaPS;
-
 
 alpha = asin(y(4)/Ls);
 alphadot = y(2)/Ls/cos(alpha);
 % FIRST: CALCULATE L_PRIMARY, L_PRIMARY DOT, AND PRIMARY FORCE
-Lp =sqrt(d^2+Lsp^2-2*d*Lsp*cos(alpha + thetaPS));
+Lp = sqrt(d^2+Lsp^2-2*d*Lsp*cos(alpha + thetaPS)); % istantaneous length of primary strut [m]
 % alpha >0 for leg under the horizon
 phi = acos((+d^2+Lp^2-Lsp^2)/Lp/d/2) + thetaPS - pi/2; % cosine theorem: Lss2 = d2+Lp2-2 d Lp (PHIPv+(90 -thetaPS)) 
 Lpdot = d*Lsp*sin(alpha + thetaPS)/Lp*alphadot;

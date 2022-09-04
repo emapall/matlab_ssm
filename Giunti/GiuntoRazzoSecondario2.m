@@ -1,27 +1,27 @@
 % Design giunto strutsecondario-razzo, sollecitato in trazione. 
 % Air Force Method (https://mechanicalc.com/reference/lug-analysis#air-force-method)
 
-
 % function [FS_tot,massIndex] = LugStrength(alpha,D,delta,tau,psi,materialindex)
 clear
 materialdata % load material properties (info >> help materialdata)
 
-%% parametri 
+%% parameters
 
-P = .6; % force [MN] 
-Dcm = 5;% hole diameter [cm]
+P = .1; % force [MN]  
+Dcm = 4.5;% hole diameter [cm]
 
 alphaM = 0; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
-alphaF = 45; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
-materialindexM = 5;
-materialindexF = 5;
-materialindexP= 6 ;
+alphaF = 30; % angle between transversal and axial components (atan(Ftr/Fax)) [deg] (25 per la femmina, 0 per il maschio)
+materialindexM = 5; % 5: titanium plate
+materialindexF = 5; 
+materialindexP= 6 ; % 6: titanium rod
 deltaM = 1.5; % typical (e/D), e: outer lug radius 
-deltaF=1.5;
-tauM = 2.5; % D/t, t: lug thickness
-tauF = 5; % D/t, t: lug thickness
-psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed
-gap=0;
+deltaF= 1.5;
+tauM = 2; % D/t, t: lug thickness
+tauF = 4; % D/t, t: lug thickness
+psi = 1; % Dp/D, Dp: pin diameter, psi=1 when no bushing is installed (or bushing of the same material)
+gap=0; % firt approximation clearence between male and female
+
 %% Maschio (Gamba)
 
 PM=P;
@@ -31,6 +31,7 @@ PM=P;
 
 PF = P/2; % force [MN] 
 [FS_totF,FS_all_axF,FS_all_trF,massIndexF] = LugStrength(PF,alphaF,Dcm,deltaF,tauF,psi,materialindexF);
+
 massIndexF=2*massIndexF;
 %% nominal Joint strength
 
@@ -57,11 +58,12 @@ Pus_P=2*(pi/4*(Dp)^2)*Fsu_P;
 
 % bending critical value
 Mu_P=pi*(Dp)^3/32*kb*Ftu_P; %
-Larm=Dp/tauM/4+Dp/tauF/2+gap;
+Larm=Dm/tauM/4+Dm/tauF/2+gap;
 Pub_P=2*Mu_P/Larm;
 
 strongPin=sum(Pub_P>=[PuJ_nom Pus_P]);
 
+%the pin in strong 
 massIndexP=Dp^3*(1/tauM+2/tauF)*rho_P;
 %problemo+pin debole, risolto: scritta male la formla di Larm
 
